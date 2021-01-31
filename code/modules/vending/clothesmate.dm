@@ -122,7 +122,7 @@
 		           /obj/item/clothing/neck/necklace/dope = 3,
 		           /obj/item/clothing/suit/jacket/letterman_nanotrasen = 1,
 				   /obj/item/clothing/under/costume/swagoutfit = 1,
-				   /obj/item/clothing/shoes/swagshoes = 1,
+				   /obj/item/clothing/shoes/swagshoes = 1)
 	refill_canister = /obj/item/vending_refill/clothing
 	default_price = 50
 	extra_price = 75
