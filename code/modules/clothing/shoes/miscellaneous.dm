@@ -343,4 +343,4 @@
 	name = "swag shoes"
 	desc = "They got me for my foams!"
 	icon_state = "SwagShoes"
-	inhand_icon_state = "SwagShoes"
+	item_state = "SwagShoes"
