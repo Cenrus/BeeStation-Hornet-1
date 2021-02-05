@@ -139,7 +139,7 @@
 //Cult Blood Spells
 /datum/action/innate/cult/blood_spell/stun
 	name = "Stun"
-	desc = "Empowers your hand to stun and mute a victim on contact."
+	desc = "Empowers your hand to stun and mute a victim on contact. Effects become weaker as the cult grows in size."
 	button_icon_state = "hand"
 	magic_path = /obj/item/melee/blood_magic/stun
 	health_cost = 10
@@ -405,8 +405,8 @@
 
 //Stun
 /obj/item/melee/blood_magic/stun
-	name = "Forbidden Whispers"
-	desc = "A coil of death wrapped around your hand, anyone inflicted with this will have their mind flooded with the forbidden whispers of Nar'Sie, causing them to collapse in to a frenzy if they lack protection for their mind."
+	name = "Stunning Aura"
+	desc = "Will stun and mute a victim on contact. Effects become weaker as the cult grows."
 	color = RUNE_COLOR_RED
 	invocation = "Fuu ma'jin!"
 
@@ -416,6 +416,8 @@
 	var/mob/living/L = target
 	if(iscultist(target))
 		return
+	var/datum/antagonist/cult/cultist = user.mind.has_antag_datum(/datum/antagonist/cult)
+	var/datum/team/cult/cult = cultist.get_team()
 	if(iscultist(user))
 		user.visible_message("<span class='warning'>[user] floods [L]'s mind with an eldritch energy!</span>", \
 							"<span class='cultitalic'>You attempt to stun [L] with the spell!</span>")
@@ -431,24 +433,57 @@
 			addtimer(CALLBACK(L, /atom/proc/cut_overlay, forbearance), 100)
 
 			if(istype(anti_magic_source, /obj/item))
-				target.visible_message("<span class='warning'>[L] is utterly unphased by your utterance!</span>", \
-									   "<span class='userdanger'>[GLOB.deity] protects you from the heresy of [user]!</span>")
-		else if(!HAS_TRAIT(target, TRAIT_MINDSHIELD) && !istype(L.get_item_by_slot(SLOT_HEAD), /obj/item/clothing/head/foilhat))
-			to_chat(user, "<span class='cultitalic'>[L] falls to the ground, gibbering madly!</span>")
-			L.Paralyze(160)
-			L.flash_act(1,1)
-			if(issilicon(target))
-				var/mob/living/silicon/S = L
-				S.emp_act(EMP_HEAVY)
-			else if(iscarbon(target))
-				var/mob/living/carbon/C = L
-				C.silent += 6
-				C.stuttering += 15
-				C.cultslurring += 15
-				C.Jitter(15)
+				var/obj/item/ams_object = anti_magic_source
+				target.visible_message("<span class='warning'>[L] starts to glow in a halo of light!</span>", \
+									   "<span class='userdanger'>Your [ams_object.name] begins to glow, emitting a blanket of holy light which surrounds you and protects you from the flash of light!</span>")
+			else
+				target.visible_message("<span class='warning'>[L] starts to glow in a halo of light!</span>", \
+									   "<span class='userdanger'>A feeling of warmth washes over you, rays of holy light surround your body and protect you from the flash of light!</span>")
 		else
-			target.visible_message("<span class='warning'>You fail to corrupt [L]'s mind!</span>", \
-									   "<span class='userdanger'>Your mindshield protects you from the heresy of [user]!</span>")
+			if(cult.cult_ascendent)
+				to_chat(user, "<span class='cultitalic'>[L] is dazed by a flash of red light!</span>")
+				L.Knockdown(100)
+				L.apply_damage(50, STAMINA, BODY_ZONE_HEAD)
+				L.flash_act(1,1)
+				if(issilicon(target))
+					var/mob/living/silicon/S = L
+					S.emp_act(EMP_HEAVY)
+				else if(iscarbon(target))
+					var/mob/living/carbon/C = L
+					C.cultslurring += 10
+					C.Jitter(15)
+				if(is_servant_of_ratvar(L))
+					L.adjustBruteLoss(30)
+			else if(cult.cult_risen)
+				to_chat(user, "<span class='cultitalic'>In a dull flash of red, [L] falls to the ground!</span>")
+				L.Paralyze(80)
+				L.flash_act(1,1)
+				if(issilicon(target))
+					var/mob/living/silicon/S = L
+					S.emp_act(EMP_LIGHT)
+				else if(iscarbon(target))
+					var/mob/living/carbon/C = L
+					C.silent += 3
+					C.stuttering += 7
+					C.cultslurring += 7
+					C.Jitter(7)
+				if(is_servant_of_ratvar(L))
+					L.adjustBruteLoss(20)
+			else
+				to_chat(user, "<span class='cultitalic'>In a brilliant flash of red, [L] falls to the ground!</span>")
+				L.Paralyze(160)
+				L.flash_act(1,1)
+				if(issilicon(target))
+					var/mob/living/silicon/S = L
+					S.emp_act(EMP_HEAVY)
+				else if(iscarbon(target))
+					var/mob/living/carbon/C = L
+					C.silent += 6
+					C.stuttering += 15
+					C.cultslurring += 15
+					C.Jitter(15)
+				if(is_servant_of_ratvar(L))
+					L.adjustBruteLoss(15)
 		uses--
 	..()
 
