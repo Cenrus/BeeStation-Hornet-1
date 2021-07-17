@@ -1475,7 +1475,7 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 		else
 			user.visible_message("<span class='danger'>[user.name] shoves [target.name]!</span>",
 				"<span class='danger'>You shove [target.name]!</span>", null, COMBAT_MESSAGE_RANGE)
-			/*var/target_held_item = target.get_active_held_item()
+			var/target_held_item = target.get_active_held_item()
 			var/knocked_item = FALSE
 			if(!is_type_in_typecache(target_held_item, GLOB.shove_disarming_types))
 				target_held_item = null
@@ -1495,8 +1495,8 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 				if(knocked_item)
 					append_message = "causing them to drop [target_held_item]"
 				else
-					append_message = "loosening their grip on [target_held_item]"*/
-			log_combat(user, target, "shoved")
+					append_message = "loosening their grip on [target_held_item]"
+			log_combat(user, target, "shoved", append_message)
 
 /datum/species/proc/spec_hitby(atom/movable/AM, mob/living/carbon/human/H)
 	return
